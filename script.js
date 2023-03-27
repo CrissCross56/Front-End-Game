@@ -9,13 +9,15 @@ function init(){
     const hiddenString = [];
     const errArr = [];
     const corrArr = [];
-    
+    let deadAlready = false;
+
 
     let reset = document.querySelector('#reset');
     let input = document.querySelector('#input');
     input.addEventListener('keydown',checkLetter);
     input.addEventListener('keyup', clearInput);
     reset.addEventListener('click', resetGame);
+    let hidden = document.querySelector('#hidden');
    
     //se we can setup and display the hangman and his noose later
     let canvas = document.querySelector('canvas');
@@ -74,21 +76,38 @@ function init(){
         //if no more _'s then the player has at this point guessed all the letters
         //check to see if there are no more 'empty' spaces in the hiddenStr
         if(!(hiddenString.includes('_'))){
-            alert("You win!")
+            alert("You win!");
         }
         console.log(hiddenString);
     }
 
     //player chose wrong, and they lose a chance
     function removeChance(){
-        chances--;
-        if(chances <= 0){
+
+        if((deadAlready = true && chances <= 0)){
             console.log(`You lose! The word was ${testStr}`)
+        }
+        else if(deadAlready = false && chances <= 0){
+            console.log(chances);
+            hangMan(ctx);
+            deadAlready = true;
         }
         else{
             hangMan(ctx,chances);
             console.log(`You have ${chances} left`)
         }
+
+
+
+        // if(chances < 0){
+        //     console.log(`You lose! The word was ${testStr}`)
+        // }
+        // else{
+        //     hangMan(ctx,chances);
+        //     console.log(`You have ${chances} left`)
+        // }
+        // chances--;
+
     }
     //set up the board for whatever size of string we are using for the answer
     function setupBoard(testStr){
@@ -103,12 +122,12 @@ function init(){
         for(let i = 0; i < testStr.length; i ++){
             hiddenString.push('_');
         }
+        hidden.innerText = hiddenString;
         console.log(hiddenString)
 
 
         // "wipe" the canvas clean
-        ctx.restore();
-
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         //and then draw again
 
         //the gallows
@@ -121,95 +140,111 @@ function init(){
         setupBoard(testStr);
     }
 
+
+
+
+
+
+    function drawGallows(ctx){
+        ctx.save();
+        ctx.strokeStyle = "black";
+    
+        //first vertical line
+        ctx.beginPath();
+                //x1,y1
+        ctx.moveTo(300,50);
+                //x2,y2
+        ctx.lineTo(300,400);
+        //
+        ctx.closePath();
+        ctx.stroke();
+    
+        //second line
+        ctx.beginPath();
+        ctx.moveTo(300, 50)
+        ctx.lineTo(450,50);
+        ctx.closePath();
+        ctx.stroke();
+    
+        //third line
+        ctx.beginPath();
+        ctx.moveTo(450,50);
+        ctx.lineTo(450,100);
+        ctx.closePath();
+        ctx.stroke();
+    
+        ctx.restore();
+    }
+    
+    function hangMan(ctx){
+        ctx.save();
+        chances --;
+        ctx.strokeStyle = 'black';
+            //check to see what case we're in
+            switch (chances) {
+                case 5:
+                    //draw the head
+                    ctx.beginPath();
+                    //    x,y,radius,startAngle,endAngle, counterClockwise?
+                    ctx.arc(450,125,25,0, 2 * Math.PI);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 4:
+                    //draw the body
+                    ctx.beginPath();
+                    ctx.moveTo(450,150);
+                    ctx.lineTo(450,225);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 3:
+                    //draw the right arm
+                    ctx.beginPath();
+                    ctx.moveTo(450,160);
+                    ctx.lineTo(500,170);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 2:
+                    //draw the left arm
+                    ctx.beginPath();
+                    ctx.moveTo(450,160);
+                    ctx.lineTo(400,170);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 1:
+                    //draw the right leg
+                    ctx.beginPath();
+                    ctx.moveTo(450,225);
+                    ctx.lineTo(475,275);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 0:
+                    //draw the left leg
+                    ctx.beginPath();
+                    ctx.moveTo(450,225);
+                    ctx.lineTo(425,275);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                default:
+                    console.log(chances);
+                    console.log('something is going horribly wrong here')
+                    break;
+            }
+    
+    
+        ctx.restore();
+    }
+    
+
+
+
 };
 
 
 
 
-function drawGallows(ctx){
-    ctx.save();
-    ctx.strokeStyle = "black";
-
-    //first vertical line
-    ctx.beginPath();
-            //x1,y1
-    ctx.moveTo(300,50);
-            //x2,y2
-    ctx.lineTo(300,400);
-    //
-    ctx.closePath();
-    ctx.stroke();
-
-    //second line
-    ctx.beginPath();
-    ctx.moveTo(300, 50)
-    ctx.lineTo(450,50);
-    ctx.closePath();
-    ctx.stroke();
-
-    //third line
-    ctx.beginPath();
-    ctx.moveTo(450,50);
-    ctx.lineTo(450,100);
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.restore();
-}
-
-function hangMan(ctx,partIdx){
-    ctx.save();
-    ctx.strokeStyle = 'black';
-        //check to see what case we're in
-        switch (partIdx) {
-            case 5:
-                //draw the head
-                ctx.beginPath();
-                //    x,y,radius,startAngle,endAngle, counterClockwise?
-                ctx.arc(450,125,25,0, 2 * Math.PI);
-                ctx.closePath();
-                ctx.stroke();
-                break;
-            case 4:
-                //draw the body
-                ctx.beginPath();
-                ctx.moveTo(450,150);
-                ctx.lineTo(450,225);
-                ctx.closePath();
-                ctx.stroke();
-                break;
-            case 3:
-                //draw the right arm
-                ctx.beginPath();
-                ctx.moveTo(450,160);
-                ctx.lineTo(500,170);
-                ctx.closePath();
-                ctx.stroke();
-                break;
-            case 2:
-                //draw the left arm
-                ctx.beginPath();
-                ctx.moveTo(450,160);
-                ctx.lineTo(400,170);
-                ctx.closePath();
-                ctx.stroke();
-                break;
-            case 1:
-                //draw the right leg
-                ctx.beginPath();
-                ctx.moveTo(450);
-                ctx.lineTo();
-                ctx.closePath();
-                ctx.stroke();
-                break;
-            case 0:
-                //draw the left leg
-                break;
-            default:
-                console.log('something is going horribly wrong here')
-                break;
-        }
-
-
-    ctx.restore();
-}
