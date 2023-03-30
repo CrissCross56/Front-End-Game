@@ -61,7 +61,7 @@ function init(){
                 console.log(`you already incorrectly guessed the letter ${e.key}`);
             }
             else{
-                console.log(`you guessed wrong`);
+                // console.log(`you guessed wrong`);
                 errArr.push(e.key);
                 removeChance();
             }
@@ -69,7 +69,7 @@ function init(){
 
         updateDOM();
 
-        console.log(corrArr, errArr);
+        // console.log(corrArr, errArr);
     }
 
     //we wanna clear the input field
@@ -108,14 +108,14 @@ function init(){
             // console.log(`You lose! The word was ${testStr}`)
         }
         else if(deadAlready = false && chances <= 0){
-            console.log(chances);
+            // console.log(chances);
             hangMan(ctx);
             updateDOM(true,true);
             deadAlready = true;
         }
         else{
             hangMan(ctx);
-            console.log(`You have ${chances} left`)
+            // console.log(`You have ${chances} left`)
         }
 
 
@@ -172,7 +172,7 @@ function init(){
             hiddenString.push('_');
         }
         hidden.innerText = hiddenString.join(" ");
-        console.log(hiddenString)
+        // console.log(hiddenString)
 
 
         // "wipe" the canvas clean
