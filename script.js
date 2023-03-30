@@ -6,7 +6,7 @@ function init(){
     let win;
     let lose;
     let chances = 6;
-    const testStr = 'racecar';
+    let testStr;
     const hiddenString = [];
     const errArr = [];
     const corrArr = [];
@@ -26,7 +26,7 @@ function init(){
     let ctx = canvas.getContext('2d');
 
     //initialize the hiddenString and other game variables
-    setupBoard(testStr);
+    setupBoard();
 
     //have a function to handle the ending of the game
    
@@ -154,7 +154,9 @@ function init(){
     }
 
     //set up the board for whatever size of string we are using for the answer
-    function setupBoard(testStr){
+    function setupBoard(){
+        //have the player have a prompt to re-assign the testStr
+        testStr = prompt("Please enter a word:");
         //initialize everything else in here
         input.addEventListener('keydown',checkLetter);
         chances = 6;
