@@ -3,7 +3,8 @@ window.onload = init;
 
 
 function init(){
-
+    let win;
+    let lose;
     let chances = 6;
     const testStr = 'racecar';
     const hiddenString = [];
@@ -11,13 +12,14 @@ function init(){
     const corrArr = [];
     let deadAlready = false;
 
-
+    let status = document.querySelector('#status');
     let reset = document.querySelector('#reset');
     let input = document.querySelector('#input');
-    input.addEventListener('keydown',checkLetter);
+    //input.addEventListener('keydown',checkLetter);
     input.addEventListener('keyup', clearInput);
     reset.addEventListener('click', resetGame);
     let hidden = document.querySelector('#hidden');
+    let errors = document.querySelector('#err');
    
     //se we can setup and display the hangman and his noose later
     let canvas = document.querySelector('canvas');
@@ -26,6 +28,10 @@ function init(){
     //initialize the hiddenString and other game variables
     setupBoard(testStr);
 
+    //have a function to handle the ending of the game
+   
+
+
     //once we checked a letter make sure we arent duplicating
     function checkDuplicates(event, arr){
         return arr.includes(event.key);
@@ -33,6 +39,10 @@ function init(){
 
     //to be called each time a key is pressed inside the input form
     function checkLetter(e){
+
+        //check to see if the game is over
+    
+
         //if our input is inside the answer string
         if(testStr.includes(e.key)){
             if(checkDuplicates(e,corrArr)){
@@ -57,6 +67,8 @@ function init(){
             }
         }
 
+        updateDOM();
+
         console.log(corrArr, errArr);
     }
 
@@ -76,24 +88,33 @@ function init(){
         //if no more _'s then the player has at this point guessed all the letters
         //check to see if there are no more 'empty' spaces in the hiddenStr
         if(!(hiddenString.includes('_'))){
-            alert("You win!");
+
+            //code here to handle Victory
+            updateDOM(true,false);
+
+            // alert("You win!");
         }
-        console.log(hiddenString);
+        // console.log(hiddenString);
     }
 
     //player chose wrong, and they lose a chance
     function removeChance(){
+        chances --;
+        hangMan(ctx);
 
         if((deadAlready = true && chances <= 0)){
-            console.log(`You lose! The word was ${testStr}`)
+            //game over,
+            updateDOM(true,deadAlready);
+            // console.log(`You lose! The word was ${testStr}`)
         }
         else if(deadAlready = false && chances <= 0){
             console.log(chances);
             hangMan(ctx);
+            updateDOM(true,true);
             deadAlready = true;
         }
         else{
-            hangMan(ctx,chances);
+            hangMan(ctx);
             console.log(`You have ${chances} left`)
         }
 
@@ -109,26 +130,55 @@ function init(){
         // chances--;
 
     }
+
+    function updateDOM(gameOver=false,dead=false){
+        errors.innerText =  ` ${errArr.join(" ")}`;
+        hidden.innerText = hiddenString.join(" ");
+
+        if(gameOver == true){
+
+            if(dead == true){
+                //output text that the player lsoes and remove event listener
+                input.removeEventListener('keydown', checkLetter);
+                status.innerText = `You Lose! The word was ${testStr}`;
+            }
+            else{
+                //if the game is over but the hangman is not dead then the player won
+                input.removeEventListener('keydown', checkLetter);
+                status.innerText = "You Win!";
+            }
+
+        }
+       
+
+    }
+
     //set up the board for whatever size of string we are using for the answer
     function setupBoard(testStr){
         //initialize everything else in here
-        
+        input.addEventListener('keydown',checkLetter);
         chances = 6;
         hiddenString.length = 0;
         errArr.length = 0;
         corrArr.length = 0;
 
+        status.innerText = " "
+        errors.innerText = " ";
+        input.value = " ";
 
         for(let i = 0; i < testStr.length; i ++){
             hiddenString.push('_');
         }
-        hidden.innerText = hiddenString;
+        hidden.innerText = hiddenString.join(" ");
         console.log(hiddenString)
 
 
         // "wipe" the canvas clean
         ctx.clearRect(0,0,canvas.width,canvas.height);
         //and then draw again
+
+        //draw the margins and the lines of the 'notebook'
+        drawNoteBook(ctx);
 
         //the gallows
         drawGallows(ctx);
@@ -140,7 +190,36 @@ function init(){
         setupBoard(testStr);
     }
 
+    function drawNoteBook(ctx){
 
+        //draw the paper
+        ctx.save();
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = '#4e86d3';
+        //draw blue lines
+        for(let i = 0; i < canvas.height; i += 10){
+            ctx.beginPath();
+            ctx.moveTo(0,i);
+            ctx.lineTo(canvas.width,i);
+            ctx.closePath();
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        //draw the margin
+        ctx.save();
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.moveTo(50,0);
+        ctx.lineTo(50,canvas.height);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+    }
 
 
 
@@ -178,7 +257,7 @@ function init(){
     
     function hangMan(ctx){
         ctx.save();
-        chances --;
+        
         ctx.strokeStyle = 'black';
             //check to see what case we're in
             switch (chances) {
@@ -229,6 +308,8 @@ function init(){
                     ctx.lineTo(425,275);
                     ctx.closePath();
                     ctx.stroke();
+
+                    //call the fucntion to handle losing
                     break;
                 default:
                     console.log(chances);

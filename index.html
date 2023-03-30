@@ -6,18 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <script src="script.js" defer></script>
 </head>
 <body>
-
-    <canvas width="640" height="480">"Get a real broweser!"</canvas>
-
-
-    <div class="input-form">
-        <p id="hidden"></p>
-        <label for="input">Type your guess:</label>
-        <input type="text" id="input" />
-        <button id="reset">Reset</button>
+<div id='board'>
+    <div id="canv">
+    <canvas width="640" height="480">"Get a real browser!"</canvas>
     </div>
+
+    <div class="inputForm">
+        <div id="info">
+            <p><span id="status"></span></p>
+            <p><span id="hidden"></span></p>
+            <p>Wrong Letters:<span id="err"></span>  </p>
+        </div>
+        <div id="forUser">
+            <div id="pencil">
+                <label for="input">Type your guess:</label>
+                <input type="text" id="input" />
+            </div>
+            <button id="reset"  class="fa fa-eraser">Reset </button>
+        </div>
+        
+       
+    </div>
+</div>
 </body>
 </html>
